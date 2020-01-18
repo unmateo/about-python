@@ -2,11 +2,11 @@
 
 Concurrency is...
 
-> [Oxford] (https://www.lexico.com/en/definition/concurrence) The fact of two or more events or circumstances happening or existing at the same time.
+> [Oxford](https://www.lexico.com/en/definition/concurrence): The fact of two or more events or circumstances happening or existing at the same time.
 
-> [Wikipedia] (https://en.wikipedia.org/wiki/Concurrency_(computer_science)) The ability of different parts or units of a program, algorithm, or problem to be executed out-of-order or in partial order, without affecting the final outcome.
+> [Wikipedia](https://en.wikipedia.org/wiki/Concurrency_(computer_science)): The ability of different parts or units of a program, algorithm, or problem to be executed out-of-order or in partial order, without affecting the final outcome.
 
-> [@tiangolo] (https://fastapi.tiangolo.com/async/#asynchronous-code) Asynchronous code just means that the language has a way to tell the computer / program that at some point in the code, he will have to wait for something else to finish somewhere else. Let's say that something else is called "slow-file".
+> [@tiangolo](https://fastapi.tiangolo.com/async/#asynchronous-code): Asynchronous code just means that the language has a way to tell the computer / program that at some point in the code, he will have to wait for something else to finish somewhere else. Let's say that something else is called "slow-file".
 
 ## When is concurrency useful?
 
@@ -40,7 +40,7 @@ Given these asumptions, let's compare our simultaneous exhibition against playin
 
        30 seconds [thinking] * 15 [moves] * 4 [games] = 30 minutes total
 
-__You'll find an implemention of this solution using python at chess.py__
+__You'll find an implemention of this solution using python at [chess.py](https://github.com/unmateo/about-python/blob/develop/concurrency/chess.py)__
 
 ## How is concurrency implemented on python?
 
@@ -56,3 +56,33 @@ Since its release it suffered several modifications and improvements, so capabil
 ### async/await keywords
 
 These two keywords where discussed on [PEP 492] (https://www.python.org/dev/peps/pep-0492/) during 2015 and introduced on Python 3.5 (September 2015). They aim to provide a clear and easy way to handle concurrency and where made reserved words on Python 3.7 (June 2018).
+
+```async def foo()``` will tell python that foo is an async function and it should be called with the await keyword.
+
+```await foo()``` is the way of invoking an async function. This tells python that while executing foo, an await instruction might appear and the execution should continue instead of waiting for it.
+
+Here's a short but quite complete example using python 3.6:
+
+```python
+import asyncio
+
+async def make_cofee():
+    print(f"I'll make some coffee while we talk...")
+    await asyncio.sleep(3)
+    print("Oh, here's your coffee!")
+
+async def chit_chat():
+    print("Tell me something about yourself")
+    await asyncio.sleep(2)
+    print("Ha! That's very interesting.")
+    print("What do you think about python?")
+    await asyncio.sleep(2)
+    print("I know, python's the best!")
+
+loop = asyncio.get_event_loop()
+tasks = asyncio.gather(make_cofee(), chit_chat())
+loop.run_until_complete(tasks)
+loop.close()
+```
+---
+Thanks for reading!
