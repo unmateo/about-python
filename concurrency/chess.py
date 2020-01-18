@@ -2,67 +2,65 @@
 
 from datetime import datetime
 from time import sleep
-from random import random, choice, seed
+from random import choice
 
 import asyncio
 
 
-oponents = ["Alexis", "Jordan", "Charly"]
-moves_per_game = 4
-random_time = lambda x: round(random()*x, 2)
-seed(42)
+oponents = (
+    ("P1", "31"),
+    ("P2", "32"),
+    ("P3", "33") 
+)
+moves_per_game = 15
+master_move_seconds = 0.3
+player_move_seconds = 0.9
 
-def choose_move():
+
+def move(player, color):
     move = choice(("A","B","C","D","E"))
-    return move
+    print(f'\x1b[6;{color};40m' + f'{player}: {move}' + '\x1b[0m')
 
-def sync_choose_move():
-    delay = ramdom_time()
-    sleep(delay)
-    return choose_move()
 
 def sync_play():
+    print("Playing SYNC")
     before = datetime.now()
-    for turn in range(moves_per_game):
-        for op in range(oponents):
-            my_move = sync_choose_move()
-            op_move = sync_choose_move()
-            print(f"SYNC {turn} vs {op}: {my_move}-{op_move}")
-    after = datetime.now()
-    return (after-before).total_seconds()
+    for op, color in oponents:
+        for turn in range(1, moves_per_game+1) :
+            sleep(master_move_seconds)
+            move(f"T{turn} - Master", color)
+            sleep(player_move_seconds)
+            move(f"T{turn} - {op}", color)
+    seconds = (datetime.now()-before).total_seconds()
+    print(f"SYNC game took {seconds} seconds")
 
 
 async def async_play():
     before = datetime.now()
 
-    async def async_turn(turn, op):
+    async def async_turn(turn, op_tuple):
+        op, color = op_tuple
 
-        my_delay = random_time(2)
-        await asyncio.sleep(my_delay)
-        my_move = choose_move()
-        print(f"Turn {turn} vs {op}: I took {my_delay} seconds: {my_move}")
+        sleep(master_move_seconds)
+        move(f"T{turn} - Master", color)
 
-        op_delay = random_time(5)
-        await asyncio.sleep(op_delay)
-        op_move = choose_move()
-        print(f"Turn {turn} vs {op}: {op} took {op_delay} seconds: {op_move}")
+        await asyncio.sleep(player_move_seconds)
+        move(f"T{turn} - {op}", color)
 
     async def play_op(op):
-        for turn in range(moves_per_game):
+        for turn in range(1, moves_per_game+1):
             await async_turn(turn, op)
 
     tasks = [play_op(op) for op in oponents]
     await asyncio.wait(tasks)
 
-    after = datetime.now()
-    return (after-before).total_seconds()
+    seconds = (datetime.now()-before).total_seconds()
+    print(f"ASYNC game took {seconds} seconds")
 
-def test_async():
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(async_play())
-    print(result)
+def play(mode):
+    if mode == "async":
+        asyncio.get_event_loop().run_until_complete(async_play())
+    elif mode == "sync":
+        sync_play()
 
-def test_sync():
-    print(sync_play())
-
-test_async()
+play("sync")
