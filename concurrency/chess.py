@@ -1,3 +1,5 @@
+#!/usr/bin/python3.6
+
 from datetime import datetime
 from time import sleep
 from random import random, choice, seed
@@ -5,7 +7,7 @@ from random import random, choice, seed
 import asyncio
 
 
-oponents = ["Alex", "Jordan", "Charlie"]
+oponents = ["Alexis", "Jordan", "Charly"]
 moves_per_game = 4
 random_time = lambda x: round(random()*x, 2)
 seed(42)
